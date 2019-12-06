@@ -112,9 +112,9 @@ int main(){
     centro.setFillColor(sf::Color::Transparent);
     centro.setOrigin(-402,-252);
 
-    sf::CircleShape bola(7);
+    /*sf::CircleShape bola(7);
     bola.setFillColor(sf::Color::Red);
-    bola.setPosition(443,293); 
+    bola.setPosition(443,293);*/
 
     sf::Vertex golCimE[] = {
         sf::Vertex(sf::Vector2f(20, 233)),
