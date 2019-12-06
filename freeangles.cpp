@@ -24,6 +24,14 @@ void classificarAngulo(){
     }
 }
 
+void coloreConvex(int idDoRobo, sf::ConvexShape *convex){
+    if(idDoRobo%2 != 0){
+        convex->setFillColor(sf::Color::Red);
+    }else{
+        convex->setFillColor(sf::Color::Yellow);
+    }
+}
+
 void criarAngulo(vector<pair<pair<double, double>, pair<double, double>>> x, int idDoRobo, int idDoRobo1){
     double coefAng1, coefAng2, alfa, angulo;
     double y1i, y2i, x1i, x2i, y1f, y2f, x1f, x2f;
@@ -104,9 +112,9 @@ int main(){
     centro.setFillColor(sf::Color::Transparent);
     centro.setOrigin(-402,-252);
 
-    /*sf::CircleShape bola(7);
+    sf::CircleShape bola(7);
     bola.setFillColor(sf::Color::Red);
-    bola.setPosition(443,293);*/ 
+    bola.setPosition(443,293); 
 
     sf::Vertex golCimE[] = {
         sf::Vertex(sf::Vector2f(20, 233)),
@@ -180,6 +188,7 @@ int main(){
     vector<pair<double, double>> posicoes(12); //Vector que guardas as posições X e Y de cada Robô que está em campo
     vector<pair<pair<double, double>, pair<double, double>>> retas(12); //Vector que guarda o X inicial e o X final, juntamente com o Y inicial e o Y final de cada reta (x1, y1),(x2, y2) 
     bool check = true; //Booleano utilizado para fazer uma verificação
+    bool draw = true; //Booleano utilizado para fazer uma verificação
 
     posicoes[id1T].first = x1T; //330, posição X inicial do Robô 1 do time amarelo
     posicoes[id1T].second = y1T; //286, posição Y inicial do Robô 1 do time amarelo
@@ -210,6 +219,8 @@ int main(){
         janela.draw(meioCamp, 2, sf::Lines);
         
         janela.draw(centro);
+
+        //janela.draw(bola);
         
         janela.draw(golCimE, 2, sf::Lines);
         janela.draw(golCimD, 2, sf::Lines);
@@ -218,16 +229,18 @@ int main(){
         janela.draw(golBaiD, 2, sf::Lines);
         janela.draw(golBaiB, 2, sf::Lines);
 
-        janela.draw(robo1T);
-        janela.draw(robo2T);
-        janela.draw(robo1M);
+        if(draw){
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
 
-        r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
-        janela.draw(r1T);
-        r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
-        janela.draw(r2T);   
-        r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
-        janela.draw(r1M);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+        }
 
         //Comandos do Keyboard para movimentar o Robô 1 do time amarelo
 
@@ -270,16 +283,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
 
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time amarelo foi movido para a direita"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
@@ -321,19 +361,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
-            criarAngulo(retas, id1M, id2T);
-            classificarAngulo();
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
 
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time amarelo foi movido para a esquerda"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
@@ -375,16 +439,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
 
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time amarelo foi movido para baixo"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
@@ -426,16 +517,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
 
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time amarelo foi movido para cima"<<endl;
         }
@@ -481,16 +599,44 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
+            check = false;
             cout<<"O robô 1 do time azul foi movido para a direita"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
             x1M -= 0.5;
@@ -531,16 +677,44 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
+            check = false;
             cout<<"O robô 1 do time azul foi movido para a esquerda"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
             y1M += 0.5;
@@ -581,16 +755,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time azul foi movido para baixo"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
@@ -632,16 +833,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 1 do time azul foi movido para cima"<<endl;
         }
@@ -687,16 +915,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 2 do time amarelo foi movido para a direita"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::B)){
@@ -738,16 +993,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 2 do time amarelo foi movido para a esquerda"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
@@ -789,16 +1071,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 2 do time amarelo foi movido para baixo"<<endl;
         }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
@@ -840,16 +1149,43 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
-            
+
             //cout<<retas[0].first.first<<"|"<<retas[0].first.second<<" || "<<posicoes[id1T].first<<"|"<<posicoes[id1T].second+14<<endl;
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+            draw = false;
             check = false;
             cout<<"O robô 2 do time amarelo foi movido para cima"<<endl;
         }
@@ -889,6 +1225,21 @@ int main(){
             retas[id2T+1].first = make_pair(posicoes[id1T].first, posicoes[id1T].second+14);
             retas[id2T+1].second = make_pair(posicoes[id2T].first+14, posicoes[id2T].second+28);
 
+            sf::ConvexShape convex;
+            convex.setPointCount(3);
+            convex.setPoint(0, sf::Vector2f(posicoes[id1T].first+28, posicoes[id1T].second+14));
+            convex.setPoint(1, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second));
+            convex.setPoint(2, sf::Vector2f(posicoes[id1M].first+14, posicoes[id1M].second+28));
+
+            sf::ConvexShape convex1;
+            convex1.setPointCount(3);
+            convex1.setPoint(0, sf::Vector2f(posicoes[id1T].first, posicoes[id1T].second+14));
+            convex1.setPoint(1, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second));
+            convex1.setPoint(2, sf::Vector2f(posicoes[id2T].first+14, posicoes[id2T].second+28));
+
+            coloreConvex(id1M, &convex);
+            coloreConvex(id2T, &convex1);
+
             criarAngulo(retas, id1M, id2T);
             classificarAngulo();
             
@@ -903,12 +1254,25 @@ int main(){
                 }
             }
 
-            janela.draw(retaRoboRoboCen, 2, sf::Lines);
             janela.draw(retaRoboRoboTop, 2, sf::Lines);
             janela.draw(retaRoboRoboDown, 2, sf::Lines);
-            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
             janela.draw(retaRoboRoboTop1, 2, sf::Lines);
             janela.draw(retaRoboRoboDown1, 2, sf::Lines);
+            janela.draw(convex);
+            janela.draw(convex1);
+            janela.draw(robo1T);
+            janela.draw(robo2T);
+            janela.draw(robo1M);
+            janela.draw(retaRoboRoboCen, 2, sf::Lines);
+            janela.draw(retaRoboRoboCen1, 2, sf::Lines);
+            r1T.setPosition(robo1T.getPosition().x+10, robo1T.getPosition().y-5);
+            janela.draw(r1T);
+            r2T.setPosition(robo2T.getPosition().x+8, robo2T.getPosition().y-5);
+            janela.draw(r2T);   
+            r1M.setPosition(robo1M.getPosition().x+10, robo1M.getPosition().y-5);
+            janela.draw(r1M);
+
+            draw = false;
         }
 
         check = true;
